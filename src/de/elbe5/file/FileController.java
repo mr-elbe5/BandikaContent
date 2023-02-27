@@ -53,7 +53,7 @@ public abstract class FileController extends Controller {
             //String token = rdata.getAttributes().getString("token");
             //checkRights(Token.matchToken(data.getId(), token));
         }
-        File file = new File(ApplicationPath.getAppFilePath(), data.getFileName());
+        File file = new File(ApplicationPath.getAppFilePath(), data.getStaticFileName());
         // if not exists, create from database
         if (!file.exists() && !FileBean.getInstance().createTempFile(file)) {
             return new StatusResponse(HttpServletResponse.SC_NOT_FOUND);
