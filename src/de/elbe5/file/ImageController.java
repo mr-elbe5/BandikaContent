@@ -42,6 +42,7 @@ public class ImageController extends FileController {
     }
 
     public IResponse openCreateImage(RequestData rdata) {
+        assertSessionCall(rdata);
         int parentId = rdata.getAttributes().getInt("parentId");
         ContentData parentData = ContentCache.getContent(parentId);
         checkRights(parentData.hasUserEditRight(rdata));
@@ -53,6 +54,7 @@ public class ImageController extends FileController {
     }
 
     public IResponse openEditImage(RequestData rdata) {
+        assertSessionCall(rdata);
         FileData data = FileBean.getInstance().getFile(rdata.getId(),true);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
@@ -61,6 +63,7 @@ public class ImageController extends FileController {
     }
 
     public IResponse saveImage(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         ImageData data = rdata.getSessionObject(ContentRequestKeys.KEY_IMAGE,ImageData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
@@ -81,6 +84,7 @@ public class ImageController extends FileController {
     }
 
     public IResponse cutImage(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         ImageData data = FileBean.getInstance().getFile(contentId,true, ImageData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
@@ -90,6 +94,7 @@ public class ImageController extends FileController {
     }
 
     public IResponse copyImage(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         ImageData data = FileBean.getInstance().getFile(contentId,true, ImageData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
@@ -103,6 +108,7 @@ public class ImageController extends FileController {
     }
 
     public IResponse pasteImage(RequestData rdata) {
+        assertSessionCall(rdata);
         int parentId = rdata.getAttributes().getInt("parentId");
         ImageData data=rdata.getClipboardData(ContentRequestKeys.KEY_IMAGE,ImageData.class);
         ContentData parent=ContentCache.getContent(parentId);
@@ -122,16 +128,22 @@ public class ImageController extends FileController {
     }
 
     public IResponse showPreview(RequestData rdata) {
+        assertSessionCall(rdata);
         int imageId = rdata.getId();
         return new PreviewResponse(imageId);
     }
 
     public IResponse deleteImage(RequestData rdata){
+        assertSessionCall(rdata);
         return deleteFile(rdata);
     }
 
     protected IResponse showEditImage() {
         return new ForwardResponse("/WEB-INF/_jsp/file/editImage.ajax.jsp");
+    }
+
+    protected IResponse showContentAdministration(RequestData rdata) {
+        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentAdministration.jsp", LocalizedStrings.string("_contentAdministration"));
     }
 
 }

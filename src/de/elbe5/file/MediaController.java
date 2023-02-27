@@ -44,6 +44,7 @@ public class MediaController extends FileController {
     }
 
     public IResponse openCreateMedia(RequestData rdata) {
+        assertSessionCall(rdata);
         int parentId = rdata.getAttributes().getInt("parentId");
         ContentData parentData = ContentCache.getContent(parentId);
         checkRights(parentData.hasUserEditRight(rdata));
@@ -55,6 +56,7 @@ public class MediaController extends FileController {
     }
 
     public IResponse openEditMedia(RequestData rdata) {
+        assertSessionCall(rdata);
         FileData data = FileBean.getInstance().getFile(rdata.getId(),true);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
@@ -63,6 +65,7 @@ public class MediaController extends FileController {
     }
 
     public IResponse saveMedia(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         MediaData data = rdata.getSessionObject(ContentRequestKeys.KEY_MEDIA,MediaData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
@@ -84,6 +87,7 @@ public class MediaController extends FileController {
     }
 
     public IResponse cutMedia(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         MediaData data = FileBean.getInstance().getFile(contentId,true,MediaData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
@@ -93,6 +97,7 @@ public class MediaController extends FileController {
     }
 
     public IResponse copyMedia(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         MediaData data = FileBean.getInstance().getFile(contentId,true,MediaData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
@@ -106,6 +111,7 @@ public class MediaController extends FileController {
     }
 
     public IResponse pasteMedia(RequestData rdata) {
+        assertSessionCall(rdata);
         int parentId = rdata.getAttributes().getInt("parentId");
         ContentData parent=ContentCache.getContent(parentId);
         if (parent == null){
@@ -129,11 +135,16 @@ public class MediaController extends FileController {
     }
 
     public IResponse deleteMedia(RequestData rdata){
+        assertSessionCall(rdata);
         return deleteFile(rdata);
     }
 
     protected IResponse showEditMedia() {
         return new ForwardResponse("/WEB-INF/_jsp/file/editMedia.ajax.jsp");
+    }
+
+    protected IResponse showContentAdministration(RequestData rdata) {
+        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentAdministration.jsp", LocalizedStrings.string("_contentAdministration"));
     }
 
 }

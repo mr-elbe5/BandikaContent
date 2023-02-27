@@ -81,4 +81,12 @@ public class ContentAdminController extends AdminController {
         return showContentLog(rdata);
     }
 
+    protected IResponse showContentAdministration(RequestData rdata) {
+        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentAdministration.jsp", LocalizedStrings.string("_contentAdministration"));
+    }
+
+    protected IResponse showContentLog(RequestData rdata) {
+        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentLog.jsp", LocalizedStrings.string("_contentLog"));
+    }
+
 }

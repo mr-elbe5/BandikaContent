@@ -27,6 +27,7 @@ public abstract class FileController extends Controller {
 
     @Deprecated
     public IResponse show(RequestData rdata) {
+        assertSessionCall(rdata);
         int id = rdata.getId();
         Log.warn("deprecated call of file show for id " + id);
         FileData data = ContentCache.getFile(id);
@@ -35,11 +36,13 @@ public abstract class FileController extends Controller {
 
     @Deprecated
     public IResponse download(RequestData rdata) {
+        assertSessionCall(rdata);
         return downloadFile(rdata);
     }
 
     @Deprecated
     private IResponse downloadFile(RequestData rdata) {
+        assertSessionCall(rdata);
         int id = rdata.getId();
         FileData data = ContentCache.getFile(id);
         rdata.getAttributes().put("download", "true");
@@ -47,6 +50,7 @@ public abstract class FileController extends Controller {
     }
 
     private IResponse show(FileData data, RequestData rdata){
+        assertSessionCall(rdata);
         ContentData parent=ContentCache.getContent(data.getParentId());
         if (!parent.hasUserReadRight(rdata)) {
             //todo
@@ -67,6 +71,7 @@ public abstract class FileController extends Controller {
     }
 
     public IResponse deleteFile(RequestData rdata) {
+        assertSessionCall(rdata);
         int contentId = rdata.getId();
         int parentId = ContentCache.getFileParentId(contentId);
         ContentData parent=ContentCache.getContent(parentId);
