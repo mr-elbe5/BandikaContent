@@ -250,6 +250,21 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
         this.parent = parent;
     }
 
+    public boolean setParent(ContentData parent, Class<? extends ContentData> cls) {
+        try {
+            if (cls.isInstance(parent)) {
+                this.parent = parent;
+                return true;
+            }
+        }
+        catch(NullPointerException | ClassCastException e){
+            // ignore
+        }
+        this.parent = null;
+        Log.error("could not set parent of correct class");
+        return false;
+    }
+
     public void collectParentIds(Set<Integer> ids) {
         ids.add(getId());
         if (parent != null)

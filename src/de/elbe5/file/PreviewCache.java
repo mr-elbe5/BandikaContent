@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class PreviewCache {
 
-    private static final Integer lockObj = 1;
+    private static final Object lockObj = new Object();
     private static final Map<Integer, BinaryFile> map = new HashMap<>();
 
     public static BinaryFile get(Integer id) {
