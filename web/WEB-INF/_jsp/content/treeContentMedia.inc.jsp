@@ -17,7 +17,7 @@
 <%
     RequestData rdata = RequestData.getRequestData(request);
     ContentData contentData = rdata.getCurrentDataInRequestOrSession(ContentRequestKeys.KEY_CONTENT, ContentData.class);
-    List<String> mediaTypes = contentData.getMediaClasses();
+    List<Class<? extends MediaData>> mediaClasses=contentData.getMediaClasses();
     int fileId=rdata.getAttributes().getInt("fileId");
 %>
         <li class="media open">
@@ -27,16 +27,16 @@
                 <% if (rdata.hasClipboardData(ContentRequestKeys.KEY_MEDIA)) {%>
                 <a class="icon fa fa-paste" href="/ctrl/media/pasteMedia?parentId=<%=contentData.getId()%>" title="<%=$SH("_pasteMedia")%>"> </a>
                 <%}
-                    if (!mediaTypes.isEmpty()) {
-                        if (mediaTypes.size()==1){%>
-                <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/media/openCreateMedia?parentId=<%=contentData.getId()%>&type=<%=mediaTypes.get(0)%>');" title="<%=$SH("_newMedia")%>"></a>
+                    if (!mediaClasses.isEmpty()) {
+                        if (mediaClasses.size()==1){%>
+                <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/media/openCreateMedia?parentId=<%=contentData.getId()%>&type=<%=mediaClasses.get(0).getName()%>');" title="<%=$SH("_newMedia")%>"></a>
                     <%}else{%>
                 <a class="icon fa fa-plus dropdown-toggle" data-toggle="dropdown" title="<%=$SH("_newMedia")%>"></a>
                 <div class="dropdown-menu">
-                    <%for (String mediaType : mediaTypes) {
+                    <%for (Class<? extends MediaData> mediaType : mediaClasses) {
                         String name = $SH("class."+mediaType);
                     %>
-                    <a class="dropdown-item" onclick="return openModalDialog('/ctrl/media/openCreateMedia?parentId=<%=contentData.getId()%>&type=<%=mediaType%>');"><%=name%>
+                    <a class="dropdown-item" onclick="return openModalDialog('/ctrl/media/openCreateMedia?parentId=<%=contentData.getId()%>&type=<%=mediaType.getName()%>');"><%=name%>
                     </a>
                     <%}%>
                 </div>

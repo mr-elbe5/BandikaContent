@@ -90,7 +90,7 @@ public class ContentController extends Controller {
         ContentData parentData = ContentCache.getContent(parentId);
         checkRights(parentData.hasUserEditRight(rdata));
         String type = rdata.getAttributes().getString("type");
-        ContentData data = ContentFactory.getNewData(type);
+        ContentData data = ContentBean.getInstance().getNewContentData(type);
         data.setCreateValues(parentData, rdata);
         data.setRanking(parentData.getChildren().size());
         rdata.setSessionObject(ContentRequestKeys.KEY_CONTENT, data);
@@ -181,7 +181,7 @@ public class ContentController extends Controller {
         int contentId = rdata.getId();
         ContentData srcData = ContentBean.getInstance().getContent(contentId);
         checkRights(srcData.hasUserEditRight(rdata));
-        ContentData data = ContentFactory.getNewData(srcData.getType());
+        ContentData data = ContentBean.getInstance().getNewContentData(srcData.getType());
         data.copyData(srcData, rdata);
         data.setChangerId(rdata.getUserId());
         rdata.setClipboardData(ContentRequestKeys.KEY_CONTENT, data);

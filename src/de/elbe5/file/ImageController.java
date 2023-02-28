@@ -47,7 +47,7 @@ public class ImageController extends FileController {
         ContentData parentData = ContentCache.getContent(parentId);
         checkRights(parentData.hasUserEditRight(rdata));
         String type=rdata.getAttributes().getString("type");
-        ImageData data = FileFactory.getNewData(type,ImageData.class);
+        ImageData data = FileBean.getInstance().getNewFileData(type,ImageData.class);
         data.setCreateValues(parentData, rdata);
         rdata.setSessionObject(ContentRequestKeys.KEY_IMAGE, data);
         return showEditImage();

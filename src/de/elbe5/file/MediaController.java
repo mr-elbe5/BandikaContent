@@ -49,7 +49,7 @@ public class MediaController extends FileController {
         ContentData parentData = ContentCache.getContent(parentId);
         checkRights(parentData.hasUserEditRight(rdata));
         String type=rdata.getAttributes().getString("type");
-        MediaData data = FileFactory.getNewData(type,MediaData.class);
+        MediaData data = FileBean.getInstance().getNewFileData(type,MediaData.class);
         data.setCreateValues(parentData, rdata);
         rdata.setSessionObject(ContentRequestKeys.KEY_MEDIA, data);
         return showEditMedia();

@@ -13,8 +13,7 @@ import de.elbe5.base.IJsonData;
 import de.elbe5.base.Log;
 import de.elbe5.base.DateHelper;
 import de.elbe5.base.StringHelper;
-import de.elbe5.file.FileData;
-import de.elbe5.file.FileFactory;
+import de.elbe5.file.*;
 import de.elbe5.group.GroupBean;
 import de.elbe5.group.GroupData;
 import de.elbe5.request.ContentRequestKeys;
@@ -30,6 +29,8 @@ import org.json.simple.JSONObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ContentData extends BaseData implements IMasterInclude, Comparable<ContentData>, IJsonData {
@@ -48,6 +49,13 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
     public static final String VIEW_TYPE_PUBLISH = "PUBLISH";
 
     public static final int ID_ROOT = 1;
+
+    public static List<Class<? extends ContentData>> childClasses = new ArrayList<>();
+    public static List<Class<? extends DocumentData>> documentClasses = new ArrayList<>();
+
+    public static List<Class<? extends ImageData>> imageClasses = new ArrayList<>();
+
+    public static List<Class<? extends MediaData>> mediaClasses = new ArrayList<>();
 
     // base data
     private String name = "";
@@ -75,7 +83,27 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
     }
 
     public String getType() {
-        return getClass().getSimpleName();
+        return getClass().getName();
+    }
+
+    public ContentBean getBean() {
+        return ContentBean.getInstance();
+    }
+
+    public List<Class<? extends ContentData>> getChildClasses(){
+        return ContentData.childClasses;
+    }
+
+    public List<Class<? extends DocumentData>> getDocumentClasses(){
+        return ContentData.documentClasses;
+    }
+
+    public List<Class<? extends ImageData>> getImageClasses(){
+        return ContentData.imageClasses;
+    }
+
+    public List<Class<? extends MediaData>> getMediaClasses(){
+        return ContentData.mediaClasses;
     }
 
     //base data
@@ -336,10 +364,6 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
         }
     }
 
-    public List<String> getChildClasses(){
-        return ContentFactory.getDefaultTypes();
-    }
-
     public void addChild(ContentData data) {
         children.add(data);
     }
@@ -375,18 +399,6 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
             return null;
         }
         return list;
-    }
-
-    public List<String> getDocumentClasses(){
-        return FileFactory.getDefaultDocumentTypes();
-    }
-
-    public List<String> getImageClasses(){
-        return FileFactory.getDefaultImageTypes();
-    }
-
-    public List<String> getMediaClasses(){
-        return FileFactory.getDefaultMediaTypes();
     }
 
     public void addFile(FileData data) {

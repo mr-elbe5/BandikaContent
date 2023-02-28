@@ -17,7 +17,7 @@
 <%
     RequestData rdata = RequestData.getRequestData(request);
     ContentData contentData = rdata.getCurrentDataInRequestOrSession(ContentRequestKeys.KEY_CONTENT, ContentData.class);
-    List<String> imageTypes=contentData.getImageClasses();
+    List<Class<? extends ImageData>> imageClasses=contentData.getImageClasses();
     int fileId=rdata.getAttributes().getInt("fileId");
 %>
         <li class="images open">
@@ -27,16 +27,16 @@
                 <% if (rdata.hasClipboardData(ContentRequestKeys.KEY_IMAGE)) {%>
                 <a class="icon fa fa-paste" href="/ctrl/image/pasteImage?parentId=<%=contentData.getId()%>" title="<%=$SH("_pasteImage")%>"> </a>
                 <%}
-                    if (!imageTypes.isEmpty()) {
-                        if (imageTypes.size() == 1){%>
-                <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/image/openCreateImage?parentId=<%=contentData.getId()%>&type=<%=imageTypes.get(0)%>');" title="<%=$SH("_newImage")%>"></a>
+                    if (!imageClasses.isEmpty()) {
+                        if (imageClasses.size() == 1){%>
+                <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/image/openCreateImage?parentId=<%=contentData.getId()%>&type=<%=imageClasses.get(0).getName()%>');" title="<%=$SH("_newImage")%>"></a>
                     <%} else {%>
                 <a class="icon fa fa-plus dropdown-toggle" data-toggle="dropdown" title="<%=$SH("_newImage")%>"></a>
                 <div class="dropdown-menu">
-                    <%for (String imageType : imageTypes) {
+                    <%for (Class<? extends ImageData> imageType : imageClasses) {
                         String name = $SH("class."+imageType);
                     %>
-                    <a class="dropdown-item" onclick="return openModalDialog('/ctrl/image/openCreateImage?parentId=<%=contentData.getId()%>&type=<%=imageType%>');"><%=name%>
+                    <a class="dropdown-item" onclick="return openModalDialog('/ctrl/image/openCreateImage?parentId=<%=contentData.getId()%>&type=<%=imageType.getName()%>');"><%=name%>
                     </a>
                     <%}%>
                 </div>

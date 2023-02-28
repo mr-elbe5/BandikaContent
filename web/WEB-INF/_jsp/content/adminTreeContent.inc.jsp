@@ -16,7 +16,7 @@
 <%
     RequestData rdata = RequestData.getRequestData(request);
     ContentData contentData = rdata.getCurrentDataInRequestOrSession(ContentRequestKeys.KEY_CONTENT, ContentData.class);
-    List<String> childTypes=contentData.getChildClasses();
+    List<Class<? extends ContentData>> childClasses = contentData.getChildClasses();
 %>
 <li class="open">
     <span class="<%=contentData.hasUnpublishedDraft() ? "unpublished" : "published"%>">
@@ -41,16 +41,16 @@
         <a class="icon fa fa-paste" href="/ctrl/content/pasteContent?parentId=<%=contentData.getId()%>" title="<%=$SH("_pasteContent")%>"> </a>
         <%
         }
-        if (!childTypes.isEmpty()) {
-            if (childTypes.size() == 1){%>
-        <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/content/openCreateContentData?parentId=<%=contentData.getId()%>&type=<%=childTypes.get(0)%>');" title="<%=$SH("_newContent")%>"></a>
+        if (!childClasses.isEmpty()) {
+            if (childClasses.size() == 1){%>
+        <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/content/openCreateContentData?parentId=<%=contentData.getId()%>&type=<%=childClasses.get(0).getName()%>');" title="<%=$SH("_newContent")%>"></a>
         <%} else {%>
         <a class="icon fa fa-plus dropdown-toggle" data-toggle="dropdown" title="<%=$SH("_newContent")%>"></a>
         <div class="dropdown-menu">
-            <%for (String pageType : childTypes) {
-                String name = $SH("class."+pageType);
+            <%for (Class<? extends ContentData> pageType : childClasses) {
+                String name = $SH("class."+pageType.getName());
             %>
-            <a class="dropdown-item" onclick="return openModalDialog('/ctrl/content/openCreateContentData?parentId=<%=contentData.getId()%>&type=<%=pageType%>');"><%=name%>
+            <a class="dropdown-item" onclick="return openModalDialog('/ctrl/content/openCreateContentData?parentId=<%=contentData.getId()%>&type=<%=pageType.getName()%>');"><%=name%>
             </a>
             <%
                 }%>

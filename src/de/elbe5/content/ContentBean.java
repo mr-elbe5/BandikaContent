@@ -12,6 +12,7 @@ import de.elbe5.base.Log;
 import de.elbe5.database.DbBean;
 import de.elbe5.rights.Right;
 
+import java.lang.reflect.Constructor;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -26,6 +27,18 @@ public class ContentBean extends DbBean {
             instance = new ContentBean();
         }
         return instance;
+    }
+
+    ContentData getNewContentData(String className){
+        try {
+            Class<? extends ContentData> cls = Class.forName(className).asSubclass(ContentData.class);
+            Constructor<? extends ContentData> ctor = cls.getConstructor();
+            return ctor.newInstance();
+        }
+        catch(Exception e){
+            Log.error("could not create class " + className,  e);
+        }
+        return null;
     }
 
     public int getNextId() {
@@ -50,7 +63,7 @@ public class ContentBean extends DbBean {
                 while (rs.next()) {
                     ContentData data=readContentData(rs);
                     if (data!=null) {
-                        ContentBean extBean = ContentFactory.getBean(data.getType());
+                        ContentBean extBean = data.getBean();
                         if (extBean != null)
                             extBean.readContentExtras(con, data);
                         list.add(data);
@@ -71,7 +84,7 @@ public class ContentBean extends DbBean {
         Connection con = getConnection();
         try {
             data = readContent(con, id);
-            ContentBean extBean = ContentFactory.getBean(data.getType());
+            ContentBean extBean = data.getBean();
             if (extBean != null)
                 extBean.readContentExtras(con, data);
         } catch (SQLException se) {
@@ -119,7 +132,7 @@ public class ContentBean extends DbBean {
     private ContentData readContentData(ResultSet rs) throws SQLException{
         int i = 1;
         String type = rs.getString(i++);
-        ContentData data = ContentFactory.getNewData(type);
+        ContentData data = getNewContentData(type);
         if (data != null) {
             data.setId(rs.getInt(i++));
             data.setCreationDate(rs.getTimestamp(i++).toLocalDateTime());
@@ -187,7 +200,7 @@ public class ContentBean extends DbBean {
             if (!data.isNew() && changedContent(con, data)) {
                 return rollbackTransaction(con);
             }
-            ContentBean extrasBean = ContentFactory.getBean(data.getType());
+            ContentBean extrasBean = data.getBean();
             data.setChangeDate(getServerTime(con));
             if (data.isNew()){
                 data.setCreationDate(data.getChangeDate());

@@ -12,12 +12,14 @@ import de.elbe5.application.ApplicationPath;
 import de.elbe5.base.BinaryFile;
 import de.elbe5.base.Log;
 import de.elbe5.base.FileHelper;
+import de.elbe5.content.ContentData;
 import de.elbe5.database.DbBean;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,23 @@ public class FileBean extends DbBean {
             instance = new FileBean();
         }
         return instance;
+    }
+
+    public FileData getNewFileData(String className){
+        try {
+            Class<? extends FileData> cls = Class.forName(className).asSubclass(FileData.class);
+            Constructor<? extends FileData> ctor = cls.getConstructor();
+            return ctor.newInstance();
+        }
+        catch(Exception e){
+            Log.error("could not create class " + className,  e);
+        }
+        return null;
+    }
+
+    public<T extends FileData> T getNewFileData(String className,Class<T> cls){
+        FileData data = getNewFileData(className);
+        return cls.cast(data);
     }
 
     public int getNextId() {
@@ -57,7 +76,7 @@ public class FileBean extends DbBean {
                 while (rs.next()) {
                     int i = 1;
                     String type = rs.getString(i++);
-                    FileData data = FileFactory.getNewData(type);
+                    FileData data = getNewFileData(type);
                     if (data != null) {
                         data.setId(rs.getInt(i++));
                         data.setCreationDate(rs.getTimestamp(i++).toLocalDateTime());
@@ -72,7 +91,7 @@ public class FileBean extends DbBean {
                         data.setFileSize(rs.getInt(i));
                     }
                     if (data!=null) {
-                        FileBean extBean = FileFactory.getBean(data.getType());
+                        FileBean extBean = data.getBean();
                         if (extBean != null)
                             extBean.readFileExtras(con, data, false);
                         list.add(data);
@@ -93,7 +112,7 @@ public class FileBean extends DbBean {
         Connection con = getConnection();
         try {
             data = readFile(con, id, complete);
-            FileBean extBean = FileFactory.getBean(data.getType());
+            FileBean extBean = data.getBean();
             if (extBean != null)
                 extBean.readFileExtras(con, data, complete);
         } catch (SQLException se) {
@@ -126,7 +145,7 @@ public class FileBean extends DbBean {
                 if (rs.next()) {
                     int i = 1;
                     String type = rs.getString(i++);
-                    data = FileFactory.getNewData(type);
+                    data = getNewFileData(type);
                     if (data != null) {
                         data.setId(rs.getInt(i++));
                         data.setCreationDate(rs.getTimestamp(i++).toLocalDateTime());
@@ -176,7 +195,7 @@ public class FileBean extends DbBean {
         }
         data.setChangeDate(getServerTime(con));
         writeFile(con, data, complete);
-        FileBean extrasBean = FileFactory.getBean(data.getType());
+        FileBean extrasBean = data.getBean();
         if (extrasBean != null) {
             extrasBean.writeFileExtras(con, data, complete);
         }

@@ -49,7 +49,7 @@ public class DocumentController extends FileController {
         ContentData parentData = ContentCache.getContent(parentId);
         checkRights(parentData.hasUserEditRight(rdata));
         String type=rdata.getAttributes().getString("type");
-        DocumentData data = FileFactory.getNewData(type,DocumentData.class);
+        DocumentData data = FileBean.getInstance().getNewFileData(type, DocumentData.class);
         data.setCreateValues(parentData, rdata);
         rdata.setSessionObject(ContentRequestKeys.KEY_DOCUMENT, data);
         return showEditDocument();

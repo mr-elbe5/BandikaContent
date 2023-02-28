@@ -45,6 +45,10 @@ public class ImageData extends FileData implements IJsonData {
         return true;
     }
 
+    public FileBean getBean() {
+        return ImageBean.getInstance();
+    }
+
     // base data
 
     public String getPreviewURL(){
