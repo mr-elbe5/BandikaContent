@@ -13,6 +13,7 @@ import de.elbe5.base.LocalizedStrings;
 import de.elbe5.base.Log;
 import de.elbe5.content.ContentCache;
 import de.elbe5.content.ContentData;
+import de.elbe5.request.ContentRequestKeys;
 import de.elbe5.request.RequestData;
 import de.elbe5.request.RequestKeys;
 import de.elbe5.response.StatusResponse;
@@ -20,10 +21,33 @@ import de.elbe5.servlet.Controller;
 import de.elbe5.response.IResponse;
 import de.elbe5.response.ForwardResponse;
 
+import de.elbe5.servlet.ControllerCache;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 
-public abstract class FileController extends Controller {
+public class FileController extends Controller {
+
+    public static final String KEY = "file";
+
+    private static FileController instance = null;
+
+    public static void setInstance(FileController instance) {
+        FileController.instance = instance;
+    }
+
+    public static FileController getInstance() {
+        return instance;
+    }
+
+    public static void register(FileController controller){
+        setInstance(controller);
+        ControllerCache.addController(controller.getKey(),getInstance());
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
+    }
 
     @Deprecated
     public IResponse show(RequestData rdata) {
@@ -70,6 +94,62 @@ public abstract class FileController extends Controller {
         return new FileResponse(file, data.getDisplayFileName(), rangeInfo);
     }
 
+    public IResponse openCreateFile(RequestData rdata) {
+        assertSessionCall(rdata);
+        int parentId = rdata.getAttributes().getInt("parentId");
+        ContentData parentData = ContentCache.getContent(parentId);
+        checkRights(parentData.hasUserEditRight(rdata));
+        String type=rdata.getAttributes().getString("type");
+        FileData data = FileBean.getInstance().getNewFileData(type);
+        data.setCreateValues(parentData, rdata);
+        rdata.setSessionObject(ContentRequestKeys.KEY_FILE, data);
+        return new ForwardResponse(data.getEditURL());
+    }
+
+    public IResponse cutFile(RequestData rdata) {
+        assertSessionCall(rdata);
+        int contentId = rdata.getId();
+        FileData data = FileBean.getInstance().getFile(contentId,true);
+        ContentData parent=ContentCache.getContent(data.getParentId());
+        checkRights(parent.hasUserEditRight(rdata));
+        rdata.setClipboardData(ContentRequestKeys.KEY_FILE, data);
+        return showContentAdministration(rdata,data.getParentId());
+    }
+
+    public IResponse copyFile(RequestData rdata) {
+        assertSessionCall(rdata);
+        int contentId = rdata.getId();
+        FileData data = FileBean.getInstance().getFile(contentId,true);
+        ContentData parent=ContentCache.getContent(data.getParentId());
+        checkRights(parent.hasUserEditRight(rdata));
+        data.setNew(true);
+        data.setId(FileBean.getInstance().getNextId());
+        data.setCreatorId(rdata.getUserId());
+        data.setChangerId(rdata.getUserId());
+        rdata.setClipboardData(ContentRequestKeys.KEY_FILE, data);
+        return showContentAdministration(rdata,data.getId());
+    }
+
+    public IResponse pasteFile(RequestData rdata) {
+        assertSessionCall(rdata);
+        int parentId = rdata.getAttributes().getInt("parentId");
+        FileData data=rdata.getClipboardData(ContentRequestKeys.KEY_FILE, FileData.class);
+        ContentData parent=ContentCache.getContent(parentId);
+        if (parent == null){
+            rdata.setMessage(LocalizedStrings.string("_actionNotExcecuted"), RequestKeys.MESSAGE_TYPE_ERROR);
+            return showContentAdministration(rdata, parentId);
+        }
+        checkRights(parent.hasUserEditRight(rdata));
+        data.setParentId(parentId);
+        data.setParent(parent);
+        data.setChangerId(rdata.getUserId());
+        FileBean.getInstance().saveFile(data, true);
+        rdata.clearClipboardData(ContentRequestKeys.KEY_FILE);
+        ContentCache.setDirty();
+        rdata.setMessage(LocalizedStrings.string("_filePasted"), RequestKeys.MESSAGE_TYPE_SUCCESS);
+        return showContentAdministration(rdata,data.getId());
+    }
+
     public IResponse deleteFile(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
@@ -82,6 +162,10 @@ public abstract class FileController extends Controller {
         rdata.getAttributes().put("contentId", Integer.toString(parentId));
         rdata.setMessage(LocalizedStrings.string("_fileDeleted"), RequestKeys.MESSAGE_TYPE_SUCCESS);
         return showContentAdministration(rdata,parentId);
+    }
+
+    protected IResponse showEditFile() {
+        return new ForwardResponse("/WEB-INF/_jsp/file/editFile.ajax.jsp");
     }
 
     protected IResponse showContentAdministration(RequestData rdata, int contentId) {

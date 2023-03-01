@@ -9,9 +9,7 @@
 package de.elbe5.content;
 
 import de.elbe5.base.StringHelper;
-import de.elbe5.file.DocumentData;
-import de.elbe5.file.ImageData;
-import de.elbe5.file.MediaData;
+import de.elbe5.file.FileData;
 import de.elbe5.request.RequestData;
 import de.elbe5.response.IResponse;
 import de.elbe5.response.RedirectResponse;
@@ -22,11 +20,7 @@ import java.util.List;
 public class LinkData extends ContentData {
 
     public static List<Class<? extends ContentData>> childClasses = new ArrayList<>();
-    public static List<Class<? extends DocumentData>> documentClasses = new ArrayList<>();
-
-    public static List<Class<? extends ImageData>> imageClasses = new ArrayList<>();
-
-    public static List<Class<? extends MediaData>> mediaClasses = new ArrayList<>();
+    public static List<Class<? extends FileData>> fileClasses = new ArrayList<>();
 
     // link data
     private String linkUrl = "";
@@ -42,16 +36,8 @@ public class LinkData extends ContentData {
     public List<Class<? extends ContentData>> getChildClasses(){
         return LinkData.childClasses;
     }
-    public List<Class<? extends DocumentData>> getDocumentClasses(){
-        return LinkData.documentClasses;
-    }
-
-    public List<Class<? extends ImageData>> getImageClasses(){
-        return LinkData.imageClasses;
-    }
-
-    public List<Class<? extends MediaData>> getMediaClasses(){
-        return LinkData.mediaClasses;
+    public List<Class<? extends FileData>> getFileClasses(){
+        return LinkData.fileClasses;
     }
 
     public void copyData(LinkData data, RequestData rdata) {

@@ -11,8 +11,7 @@ package de.elbe5.request;
 public class ContentRequestKeys {
 
     public static final String KEY_CONTENT = "contentData";
-    public static final String KEY_DOCUMENT = "documentData";
-    public static final String KEY_IMAGE = "imageData";
-    public static final String KEY_MEDIA = "mediaData";
+
+    public static final String KEY_FILE = "fileData";
 
 }

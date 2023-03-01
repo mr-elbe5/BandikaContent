@@ -16,6 +16,18 @@ public class MediaData extends FileData {
     public MediaData() {
     }
 
+    public String getControllerKey() {
+        return MediaController.KEY;
+    }
+
+    public String getIconStyle(){
+        return "fa-film";
+    }
+
+    public String getEditURL(){
+        return "/WEB-INF/_jsp/file/editMedia.ajax.jsp";
+    }
+
     // multiple data
 
     @Override

@@ -36,8 +36,16 @@ public abstract class FileData extends BaseData {
         return getClass().getName();
     }
 
+    public String getControllerKey() {
+        return FileController.KEY;
+    }
+
     public FileBean getBean() {
         return FileBean.getInstance();
+    }
+
+    public String getIconStyle(){
+        return "fa-file-o";
     }
 
     public void adjustFileNameToDisplayName(){
@@ -68,6 +76,10 @@ public abstract class FileData extends BaseData {
 
     public String getStaticURL(){
         return "/files/"+ getStaticFileName();
+    }
+
+    public String getEditURL(){
+        return "/WEB-INF/_jsp/file/editFile.ajax.jsp";
     }
 
     public String getDisplayName() {

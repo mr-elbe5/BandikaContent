@@ -19,7 +19,7 @@ public abstract class FileClassInfo {
     private final FileBean bean;
 
     public FileClassInfo(Class<? extends FileData> fileClass, FileBean bean){
-        type = fileClass.getSimpleName();
+        type = fileClass.getName();
         try {
             ctor = fileClass.getConstructor();
         } catch (Exception e) {

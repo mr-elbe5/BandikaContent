@@ -216,7 +216,7 @@ public class FileBean extends DbBean {
         data.setChangeDate(getServerTime(con));
         int i = 1;
         pst = con.prepareStatement(data.isNew() ? INSERT_FILE_SQL : (complete ? UPDATE_FILE_SQL : UPDATE_FILE_NOBYTES_SQL));
-        pst.setString(i++, data.getClass().getSimpleName());
+        pst.setString(i++, data.getClass().getName());
         pst.setTimestamp(i++, Timestamp.valueOf(data.getCreationDate()));
         pst.setTimestamp(i++, Timestamp.valueOf(data.getChangeDate()));
         if (data.getParentId() == 0) {

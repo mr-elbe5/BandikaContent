@@ -29,8 +29,6 @@ import org.json.simple.JSONObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ContentData extends BaseData implements IMasterInclude, Comparable<ContentData>, IJsonData {
@@ -51,11 +49,7 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
     public static final int ID_ROOT = 1;
 
     public static List<Class<? extends ContentData>> childClasses = new ArrayList<>();
-    public static List<Class<? extends DocumentData>> documentClasses = new ArrayList<>();
-
-    public static List<Class<? extends ImageData>> imageClasses = new ArrayList<>();
-
-    public static List<Class<? extends MediaData>> mediaClasses = new ArrayList<>();
+    public static List<Class<? extends FileData>> fileClasses = new ArrayList<>();
 
     // base data
     private String name = "";
@@ -94,16 +88,8 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
         return ContentData.childClasses;
     }
 
-    public List<Class<? extends DocumentData>> getDocumentClasses(){
-        return ContentData.documentClasses;
-    }
-
-    public List<Class<? extends ImageData>> getImageClasses(){
-        return ContentData.imageClasses;
-    }
-
-    public List<Class<? extends MediaData>> getMediaClasses(){
-        return ContentData.mediaClasses;
+    public List<Class<? extends FileData>> getFileClasses(){
+        return ContentData.fileClasses;
     }
 
     //base data

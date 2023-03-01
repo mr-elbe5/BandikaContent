@@ -16,8 +16,8 @@
 <%@ taglib uri="/WEB-INF/formtags.tld" prefix="form" %>
 <%
     RequestData rdata = RequestData.getRequestData(request);
-    MediaData mediaData = rdata.getSessionObject(ContentRequestKeys.KEY_MEDIA,MediaData.class);
-    String url = "/ctrl/media/saveMedia/" + mediaData.getId();
+    MediaData mediaData = rdata.getSessionObject(ContentRequestKeys.KEY_FILE,MediaData.class);
+    String url = "/ctrl/media/saveFile/" + mediaData.getId();
 %>
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">

@@ -43,42 +43,30 @@ public class DocumentController extends FileController {
         return KEY;
     }
 
-    public IResponse openCreateDocument(RequestData rdata) {
-        assertSessionCall(rdata);
-        int parentId = rdata.getAttributes().getInt("parentId");
-        ContentData parentData = ContentCache.getContent(parentId);
-        checkRights(parentData.hasUserEditRight(rdata));
-        String type=rdata.getAttributes().getString("type");
-        DocumentData data = FileBean.getInstance().getNewFileData(type, DocumentData.class);
-        data.setCreateValues(parentData, rdata);
-        rdata.setSessionObject(ContentRequestKeys.KEY_DOCUMENT, data);
-        return showEditDocument();
-    }
-
-    public IResponse openEditDocument(RequestData rdata) {
+    public IResponse openEditFile(RequestData rdata) {
         assertSessionCall(rdata);
         FileData data = FileBean.getInstance().getFile(rdata.getId(),true);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
-        rdata.setSessionObject(ContentRequestKeys.KEY_DOCUMENT,data);
-        return showEditDocument();
+        rdata.setSessionObject(ContentRequestKeys.KEY_FILE,data);
+        return showEditFile();
     }
 
-    public IResponse saveDocument(RequestData rdata) {
+    public IResponse saveFile(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
-        DocumentData data = rdata.getSessionObject(ContentRequestKeys.KEY_DOCUMENT,DocumentData.class);
+        DocumentData data = rdata.getSessionObject(ContentRequestKeys.KEY_FILE,DocumentData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
         data.readSettingsRequestData(rdata);
         if (!rdata.checkFormErrors()) {
-            return showEditDocument();
+            return showEditFile();
         }
         data.setChangerId(rdata.getUserId());
         //bytes=null, if no new file selected
         if (!FileBean.getInstance().saveFile(data,data.isNew() || data.getBytes()!=null)) {
             setSaveError(rdata);
-            return showEditDocument();
+            return showEditFile();
         }
         data.setNew(false);
         ContentCache.setDirty();
@@ -86,65 +74,8 @@ public class DocumentController extends FileController {
         return new CloseDialogResponse("/ctrl/admin/openContentAdministration?contentId=" + data.getId());
     }
 
-    public IResponse cutDocument(RequestData rdata) {
-        assertSessionCall(rdata);
-        int contentId = rdata.getId();
-        DocumentData data = FileBean.getInstance().getFile(contentId,true,DocumentData.class);
-        ContentData parent=ContentCache.getContent(data.getParentId());
-        checkRights(parent.hasUserEditRight(rdata));
-        rdata.setClipboardData(ContentRequestKeys.KEY_DOCUMENT, data);
-        return showContentAdministration(rdata,data.getParentId());
-    }
-
-    public IResponse copyDocument(RequestData rdata) {
-        assertSessionCall(rdata);
-        int contentId = rdata.getId();
-        DocumentData data = FileBean.getInstance().getFile(contentId,true,DocumentData.class);
-        ContentData parent=ContentCache.getContent(data.getParentId());
-        checkRights(parent.hasUserEditRight(rdata));
-        data.setNew(true);
-        data.setId(FileBean.getInstance().getNextId());
-        data.setCreatorId(rdata.getUserId());
-        data.setChangerId(rdata.getUserId());
-        rdata.setClipboardData(ContentRequestKeys.KEY_DOCUMENT, data);
-        return showContentAdministration(rdata,data.getId());
-    }
-
-    public IResponse pasteDocument(RequestData rdata) {
-        assertSessionCall(rdata);
-        int parentId = rdata.getAttributes().getInt("parentId");
-        ContentData parent=ContentCache.getContent(parentId);
-        if (parent == null){
-            rdata.setMessage(LocalizedStrings.string("_actionNotExcecuted"), RequestKeys.MESSAGE_TYPE_ERROR);
-            return showContentAdministration(rdata);
-        }
-        checkRights(parent.hasUserEditRight(rdata));
-        DocumentData data=rdata.getClipboardData(ContentRequestKeys.KEY_DOCUMENT,DocumentData.class);
-        if (data==null){
-            rdata.setMessage(LocalizedStrings.string("_actionNotExcecuted"), RequestKeys.MESSAGE_TYPE_ERROR);
-            return showContentAdministration(rdata);
-        }
-        data.setParentId(parentId);
-        data.setParent(parent);
-        data.setChangerId(rdata.getUserId());
-        FileBean.getInstance().saveFile(data,true);
-        rdata.clearClipboardData(ContentRequestKeys.KEY_DOCUMENT);
-        ContentCache.setDirty();
-        rdata.setMessage(LocalizedStrings.string("_documentPasted"), RequestKeys.MESSAGE_TYPE_SUCCESS);
-        return showContentAdministration(rdata,data.getId());
-    }
-
-    public IResponse deleteDocument(RequestData rdata){
-        assertSessionCall(rdata);
-        return deleteFile(rdata);
-    }
-
-    protected IResponse showEditDocument() {
+    protected IResponse showEditFile() {
         return new ForwardResponse("/WEB-INF/_jsp/file/editDocument.ajax.jsp");
-    }
-
-    protected IResponse showContentAdministration(RequestData rdata) {
-        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentAdministration.jsp", LocalizedStrings.string("_contentAdministration"));
     }
 
 }

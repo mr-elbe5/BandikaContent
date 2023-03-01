@@ -17,8 +17,8 @@
 <%@ taglib uri="/WEB-INF/formtags.tld" prefix="form" %>
 <%
     RequestData rdata = RequestData.getRequestData(request);
-    ImageData imageData = rdata.getSessionObject(ContentRequestKeys.KEY_IMAGE,ImageData.class);
-    String url = "/ctrl/image/saveImage/" + imageData.getId();
+    ImageData imageData = rdata.getSessionObject(ContentRequestKeys.KEY_FILE,ImageData.class);
+    String url = "/ctrl/image/saveFile/" + imageData.getId();
     UserData creator = UserCache.getUser(imageData.getCreatorId());
     String creatorName = creator == null ? "" : creator.getName();
     UserData changer = UserCache.getUser(imageData.getChangerId());

@@ -41,90 +41,34 @@ public class ImageController extends FileController {
         return KEY;
     }
 
-    public IResponse openCreateImage(RequestData rdata) {
-        assertSessionCall(rdata);
-        int parentId = rdata.getAttributes().getInt("parentId");
-        ContentData parentData = ContentCache.getContent(parentId);
-        checkRights(parentData.hasUserEditRight(rdata));
-        String type=rdata.getAttributes().getString("type");
-        ImageData data = FileBean.getInstance().getNewFileData(type,ImageData.class);
-        data.setCreateValues(parentData, rdata);
-        rdata.setSessionObject(ContentRequestKeys.KEY_IMAGE, data);
-        return showEditImage();
-    }
-
-    public IResponse openEditImage(RequestData rdata) {
+    public IResponse openEditFile(RequestData rdata) {
         assertSessionCall(rdata);
         FileData data = FileBean.getInstance().getFile(rdata.getId(),true);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
-        rdata.setSessionObject(ContentRequestKeys.KEY_IMAGE,data);
-        return showEditImage();
+        rdata.setSessionObject(ContentRequestKeys.KEY_FILE,data);
+        return showEditFile();
     }
 
-    public IResponse saveImage(RequestData rdata) {
+    public IResponse saveFile(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
-        ImageData data = rdata.getSessionObject(ContentRequestKeys.KEY_IMAGE,ImageData.class);
+        ImageData data = rdata.getSessionObject(ContentRequestKeys.KEY_FILE,ImageData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
         data.readSettingsRequestData(rdata);
         if (!rdata.checkFormErrors()) {
-            return showEditImage();
+            return showEditFile();
         }
         data.setChangerId(rdata.getUserId());
         if (!FileBean.getInstance().saveFile(data, data.isNew() || data.getBytes()!=null)) {
             setSaveError(rdata);
-            return showEditImage();
+            return showEditFile();
         }
         data.setNew(false);
         ContentCache.setDirty();
         rdata.setMessage(LocalizedStrings.string("_fileSaved"), RequestKeys.MESSAGE_TYPE_SUCCESS);
         return new CloseDialogResponse("/ctrl/admin/openContentAdministration?contentId=" + data.getId());
-    }
-
-    public IResponse cutImage(RequestData rdata) {
-        assertSessionCall(rdata);
-        int contentId = rdata.getId();
-        ImageData data = FileBean.getInstance().getFile(contentId,true, ImageData.class);
-        ContentData parent=ContentCache.getContent(data.getParentId());
-        checkRights(parent.hasUserEditRight(rdata));
-        rdata.setClipboardData(ContentRequestKeys.KEY_IMAGE, data);
-        return showContentAdministration(rdata,data.getParentId());
-    }
-
-    public IResponse copyImage(RequestData rdata) {
-        assertSessionCall(rdata);
-        int contentId = rdata.getId();
-        ImageData data = FileBean.getInstance().getFile(contentId,true, ImageData.class);
-        ContentData parent=ContentCache.getContent(data.getParentId());
-        checkRights(parent.hasUserEditRight(rdata));
-        data.setNew(true);
-        data.setId(FileBean.getInstance().getNextId());
-        data.setCreatorId(rdata.getUserId());
-        data.setChangerId(rdata.getUserId());
-        rdata.setClipboardData(ContentRequestKeys.KEY_IMAGE, data);
-        return showContentAdministration(rdata,data.getId());
-    }
-
-    public IResponse pasteImage(RequestData rdata) {
-        assertSessionCall(rdata);
-        int parentId = rdata.getAttributes().getInt("parentId");
-        ImageData data=rdata.getClipboardData(ContentRequestKeys.KEY_IMAGE,ImageData.class);
-        ContentData parent=ContentCache.getContent(parentId);
-        if (parent == null){
-            rdata.setMessage(LocalizedStrings.string("_actionNotExcecuted"), RequestKeys.MESSAGE_TYPE_ERROR);
-            return showContentAdministration(rdata);
-        }
-        checkRights(parent.hasUserEditRight(rdata));
-        data.setParentId(parentId);
-        data.setParent(parent);
-        data.setChangerId(rdata.getUserId());
-        FileBean.getInstance().saveFile(data, true);
-        rdata.clearClipboardData(ContentRequestKeys.KEY_IMAGE);
-        ContentCache.setDirty();
-        rdata.setMessage(LocalizedStrings.string("_imagePasted"), RequestKeys.MESSAGE_TYPE_SUCCESS);
-        return showContentAdministration(rdata,data.getId());
     }
 
     public IResponse showPreview(RequestData rdata) {
@@ -133,17 +77,8 @@ public class ImageController extends FileController {
         return new PreviewResponse(imageId);
     }
 
-    public IResponse deleteImage(RequestData rdata){
-        assertSessionCall(rdata);
-        return deleteFile(rdata);
-    }
-
-    protected IResponse showEditImage() {
+    protected IResponse showEditFile() {
         return new ForwardResponse("/WEB-INF/_jsp/file/editImage.ajax.jsp");
-    }
-
-    protected IResponse showContentAdministration(RequestData rdata) {
-        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentAdministration.jsp", LocalizedStrings.string("_contentAdministration"));
     }
 
 }

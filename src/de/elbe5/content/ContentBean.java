@@ -226,7 +226,7 @@ public class ContentBean extends DbBean {
         try {
             pst = con.prepareStatement(INSERT_CONTENT_SQL);
             int i = 1;
-            pst.setString(i++, data.getClass().getSimpleName());
+            pst.setString(i++, data.getClass().getName());
             pst.setTimestamp(i++, Timestamp.valueOf(data.getCreationDate()));
             pst.setTimestamp(i++, Timestamp.valueOf(data.getChangeDate()));
             if (data.getParentId() == 0) {

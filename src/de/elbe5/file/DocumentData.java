@@ -8,6 +8,14 @@ public class DocumentData extends FileData {
     public DocumentData() {
     }
 
+    public String getControllerKey() {
+        return DocumentController.KEY;
+    }
+
+    public String getEditURL(){
+        return "/WEB-INF/_jsp/file/editDocument.ajax.jsp";
+    }
+
     // multiple data
 
     @Override

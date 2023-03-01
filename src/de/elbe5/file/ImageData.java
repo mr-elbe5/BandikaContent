@@ -49,6 +49,18 @@ public class ImageData extends FileData implements IJsonData {
         return ImageBean.getInstance();
     }
 
+    public String getIconStyle(){
+        return "fa-image";
+    }
+
+    public String getControllerKey() {
+        return ImageController.KEY;
+    }
+
+    public String getEditURL(){
+        return "/WEB-INF/_jsp/file/editImage.ajax.jsp";
+    }
+
     // base data
 
     public String getPreviewURL(){

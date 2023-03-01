@@ -43,42 +43,30 @@ public class MediaController extends FileController {
         return KEY;
     }
 
-    public IResponse openCreateMedia(RequestData rdata) {
-        assertSessionCall(rdata);
-        int parentId = rdata.getAttributes().getInt("parentId");
-        ContentData parentData = ContentCache.getContent(parentId);
-        checkRights(parentData.hasUserEditRight(rdata));
-        String type=rdata.getAttributes().getString("type");
-        MediaData data = FileBean.getInstance().getNewFileData(type,MediaData.class);
-        data.setCreateValues(parentData, rdata);
-        rdata.setSessionObject(ContentRequestKeys.KEY_MEDIA, data);
-        return showEditMedia();
-    }
-
-    public IResponse openEditMedia(RequestData rdata) {
+    public IResponse openEditFile(RequestData rdata) {
         assertSessionCall(rdata);
         FileData data = FileBean.getInstance().getFile(rdata.getId(),true);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
-        rdata.setSessionObject(ContentRequestKeys.KEY_MEDIA,data);
-        return showEditMedia();
+        rdata.setSessionObject(ContentRequestKeys.KEY_FILE,data);
+        return showEditFile();
     }
 
-    public IResponse saveMedia(RequestData rdata) {
+    public IResponse saveFile(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
-        MediaData data = rdata.getSessionObject(ContentRequestKeys.KEY_MEDIA,MediaData.class);
+        MediaData data = rdata.getSessionObject(ContentRequestKeys.KEY_FILE,MediaData.class);
         ContentData parent=ContentCache.getContent(data.getParentId());
         checkRights(parent.hasUserEditRight(rdata));
         data.readSettingsRequestData(rdata);
         if (!rdata.checkFormErrors()) {
-            return showEditMedia();
+            return showEditFile();
         }
         data.setChangerId(rdata.getUserId());
         //bytes=null, if no new file selected
         if (!FileBean.getInstance().saveFile(data,data.isNew() || data.getBytes()!=null)) {
             setSaveError(rdata);
-            return showEditMedia();
+            return showEditFile();
         }
         data.setNew(false);
         ContentCache.setDirty();
@@ -86,65 +74,8 @@ public class MediaController extends FileController {
         return new CloseDialogResponse("/ctrl/admin/openContentAdministration?contentId=" + data.getId());
     }
 
-    public IResponse cutMedia(RequestData rdata) {
-        assertSessionCall(rdata);
-        int contentId = rdata.getId();
-        MediaData data = FileBean.getInstance().getFile(contentId,true,MediaData.class);
-        ContentData parent=ContentCache.getContent(data.getParentId());
-        checkRights(parent.hasUserEditRight(rdata));
-        rdata.setClipboardData(ContentRequestKeys.KEY_MEDIA, data);
-        return showContentAdministration(rdata,data.getParentId());
-    }
-
-    public IResponse copyMedia(RequestData rdata) {
-        assertSessionCall(rdata);
-        int contentId = rdata.getId();
-        MediaData data = FileBean.getInstance().getFile(contentId,true,MediaData.class);
-        ContentData parent=ContentCache.getContent(data.getParentId());
-        checkRights(parent.hasUserEditRight(rdata));
-        data.setNew(true);
-        data.setId(FileBean.getInstance().getNextId());
-        data.setCreatorId(rdata.getUserId());
-        data.setChangerId(rdata.getUserId());
-        rdata.setClipboardData(ContentRequestKeys.KEY_MEDIA, data);
-        return showContentAdministration(rdata,data.getId());
-    }
-
-    public IResponse pasteMedia(RequestData rdata) {
-        assertSessionCall(rdata);
-        int parentId = rdata.getAttributes().getInt("parentId");
-        ContentData parent=ContentCache.getContent(parentId);
-        if (parent == null){
-            rdata.setMessage(LocalizedStrings.string("_actionNotExcecuted"), RequestKeys.MESSAGE_TYPE_ERROR);
-            return showContentAdministration(rdata);
-        }
-        checkRights(parent.hasUserEditRight(rdata));
-        MediaData data=rdata.getClipboardData(ContentRequestKeys.KEY_MEDIA,MediaData.class);
-        if (data==null){
-            rdata.setMessage(LocalizedStrings.string("_actionNotExcecuted"), RequestKeys.MESSAGE_TYPE_ERROR);
-            return showContentAdministration(rdata);
-        }
-        data.setParentId(parentId);
-        data.setParent(parent);
-        data.setChangerId(rdata.getUserId());
-        FileBean.getInstance().saveFile(data,true);
-        rdata.clearClipboardData(ContentRequestKeys.KEY_MEDIA);
-        ContentCache.setDirty();
-        rdata.setMessage(LocalizedStrings.string("_mediaPasted"), RequestKeys.MESSAGE_TYPE_SUCCESS);
-        return showContentAdministration(rdata,data.getId());
-    }
-
-    public IResponse deleteMedia(RequestData rdata){
-        assertSessionCall(rdata);
-        return deleteFile(rdata);
-    }
-
-    protected IResponse showEditMedia() {
+    protected IResponse showEditFile() {
         return new ForwardResponse("/WEB-INF/_jsp/file/editMedia.ajax.jsp");
-    }
-
-    protected IResponse showContentAdministration(RequestData rdata) {
-        return openAdminPage(rdata, "/WEB-INF/_jsp/administration/contentAdministration.jsp", LocalizedStrings.string("_contentAdministration"));
     }
 
 }
