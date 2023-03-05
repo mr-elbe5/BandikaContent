@@ -8,7 +8,7 @@
  */
 package de.elbe5.content;
 
-import de.elbe5.base.BaseData;
+import de.elbe5.data.BaseData;
 
 public class ContentInfoData extends BaseData {
 

@@ -266,15 +266,14 @@ public class ImageData extends FileData implements IJsonData {
     }
 
     @Override
-    public JsonObject getJson(){
-        JsonObject json = new JsonObject();
-        json.add("id",getId());
-        json.add("fileName",getFileName());
-        json.addIfNotEmpty("name",getDisplayName());
-        json.addIfNotEmpty("displayName",getDisplayName());
-        json.addIfNotEmpty("contentType",getContentType());
-        json.addIfNotZero("width", getWidth());
-        json.addIfNotZero("height", getHeight());
-        return json;
+    public JsonObject getJson() {
+        return super.getJson()
+                .add("id", getId())
+                .add("fileName", getFileName())
+                .add("name", getDisplayName())
+                .add("displayName", getDisplayName())
+                .add("contentType", getContentType())
+                .add("width", getWidth())
+                .add("height", getHeight());
     }
 }

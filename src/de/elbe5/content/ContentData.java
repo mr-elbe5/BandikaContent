@@ -9,6 +9,7 @@
 package de.elbe5.content;
 
 import de.elbe5.base.*;
+import de.elbe5.data.BaseData;
 import de.elbe5.file.*;
 import de.elbe5.group.GroupBean;
 import de.elbe5.group.GroupData;
@@ -20,14 +21,13 @@ import de.elbe5.rights.SystemZone;
 import de.elbe5.user.UserCache;
 import de.elbe5.user.UserData;
 import de.elbe5.response.IResponse;
-import org.json.simple.JSONObject;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.util.*;
 
-public class ContentData extends BaseData implements IMasterInclude, Comparable<ContentData>, IJsonData {
+public class ContentData extends BaseData implements IMasterInclude, Comparable<ContentData> {
 
     public static final String ACCESS_TYPE_OPEN = "OPEN";
     public static final String ACCESS_TYPE_INHERITS = "INHERIT";
@@ -86,22 +86,6 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
 
     public List<Class<? extends FileData>> getFileClasses(){
         return ContentData.fileClasses;
-    }
-
-    //base data
-
-    public String getCreatorName(){
-        UserData user= UserCache.getUser(getCreatorId());
-        if (user!=null)
-            return user.getName();
-        return "";
-    }
-
-    public String getChangerName(){
-        UserData user= UserCache.getUser(getChangerId());
-        if (user!=null)
-            return user.getName();
-        return "";
     }
 
     public String getName() {
@@ -591,14 +575,9 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
 
     @Override
     public JsonObject getJson() {
-        JsonObject json = new JsonObject();
-        json.add("id",getId());
-        json.addIfNotNull("creationDate", getCreationDate());
-        json.addIfNotZero("creatorId", getCreatorId());
-        json.addIfNotEmpty("creatorName", getCreatorName());
-        json.addIfNotEmpty("name",getName());
-        json.addIfNotEmpty("displayName",getDisplayName());
-        json.addIfNotEmpty("description",getDescription());
-        return json;
+        return super.getJson()
+        .add("name",getName())
+        .add("displayName",getDisplayName())
+        .add("description",getDescription());
     }
 }
