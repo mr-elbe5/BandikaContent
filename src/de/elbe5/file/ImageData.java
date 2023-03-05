@@ -8,12 +8,7 @@
  */
 package de.elbe5.file;
 
-import de.elbe5.base.BinaryFile;
-import de.elbe5.base.IJsonData;
-import de.elbe5.base.Log;
-import de.elbe5.base.FileHelper;
-import de.elbe5.base.ImageHelper;
-import de.elbe5.base.StringHelper;
+import de.elbe5.base.*;
 import de.elbe5.request.RequestData;
 import org.json.simple.JSONObject;
 
@@ -270,17 +265,16 @@ public class ImageData extends FileData implements IJsonData {
         setPreviewBytes(ImageHelper.writeImage(writer, image));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public JSONObject getJson(){
-        JSONObject json = new JSONObject();
-        json.put("id",getId());
-        json.put("fileName",getFileName());
-        json.put("name",getDisplayName());
-        json.put("displayName",getDisplayName());
-        json.put("contentType",getContentType());
-        json.put("width", getWidth());
-        json.put("height", getHeight());
+    public JsonObject getJson(){
+        JsonObject json = new JsonObject();
+        json.add("id",getId());
+        json.add("fileName",getFileName());
+        json.addIfNotEmpty("name",getDisplayName());
+        json.addIfNotEmpty("displayName",getDisplayName());
+        json.addIfNotEmpty("contentType",getContentType());
+        json.addIfNotZero("width", getWidth());
+        json.addIfNotZero("height", getHeight());
         return json;
     }
 }

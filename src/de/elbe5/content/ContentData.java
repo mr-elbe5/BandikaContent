@@ -8,11 +8,7 @@
  */
 package de.elbe5.content;
 
-import de.elbe5.base.BaseData;
-import de.elbe5.base.IJsonData;
-import de.elbe5.base.Log;
-import de.elbe5.base.DateHelper;
-import de.elbe5.base.StringHelper;
+import de.elbe5.base.*;
 import de.elbe5.file.*;
 import de.elbe5.group.GroupBean;
 import de.elbe5.group.GroupData;
@@ -387,6 +383,23 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
         return list;
     }
 
+    public<T extends FileData> T getFileWithId(int id, Class<T> cls) {
+        try {
+            for (FileData data : getFiles()){
+                if (data.getId() == id) {
+                    if (cls.isInstance(data))
+                        return cls.cast(data);
+                    else
+                        return null;
+                }
+            }
+        }
+        catch(NullPointerException | ClassCastException e){
+            return null;
+        }
+        return null;
+    }
+
     public void addFile(FileData data) {
         files.add(data);
     }
@@ -576,17 +589,16 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
         return getDisplayName().compareTo(data.getDisplayName());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public JSONObject getJson() {
-        JSONObject json = new JSONObject();
-        json.put("id",getId());
-        json.put("creationDate", DateHelper.asMillis(getCreationDate()));
-        json.put("creatorId", getCreatorId());
-        json.put("creatorName", getCreatorName());
-        json.put("name",getName());
-        json.put("displayName",getDisplayName());
-        json.put("description",getDescription());
+    public JsonObject getJson() {
+        JsonObject json = new JsonObject();
+        json.add("id",getId());
+        json.addIfNotNull("creationDate", getCreationDate());
+        json.addIfNotZero("creatorId", getCreatorId());
+        json.addIfNotEmpty("creatorName", getCreatorName());
+        json.addIfNotEmpty("name",getName());
+        json.addIfNotEmpty("displayName",getDisplayName());
+        json.addIfNotEmpty("description",getDescription());
         return json;
     }
 }
