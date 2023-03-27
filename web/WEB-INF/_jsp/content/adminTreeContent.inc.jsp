@@ -15,7 +15,7 @@
 <%@ taglib uri="/WEB-INF/formtags.tld" prefix="form" %>
 <%
     RequestData rdata = RequestData.getRequestData(request);
-    ContentData contentData = rdata.getCurrentDataInRequestOrSession(ContentRequestKeys.KEY_CONTENT, ContentData.class);
+    ContentData contentData = rdata.getRequestObject(ContentRequestKeys.KEY_CONTENT, ContentData.class);
     List<Class<? extends ContentData>> childClasses = contentData.getChildClasses();
 %>
 <li class="open">
