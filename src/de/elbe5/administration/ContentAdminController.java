@@ -41,7 +41,7 @@ public class ContentAdminController extends AdminController {
 
     @Override
     public IResponse openAdministration(RequestData rdata){
-        if (rdata.hasSystemRight(SystemZone.CONTENTEDIT))
+        if (rdata.hasContentEditRight())
             return openContentAdministration(rdata);
         if (rdata.hasSystemRight(SystemZone.USER))
             return openPersonAdministration(rdata);
@@ -51,12 +51,12 @@ public class ContentAdminController extends AdminController {
     }
 
     public IResponse openContentAdministration(RequestData rdata) {
-        checkRights(rdata.hasAnyContentRight());
+        checkRights(rdata.hasContentEditRight());
         return showContentAdministration(rdata);
     }
 
     public IResponse openContentLog(RequestData rdata) {
-        checkRights(rdata.hasAnyContentRight());
+        checkRights(rdata.hasContentEditRight());
         return showContentLog(rdata);
     }
 

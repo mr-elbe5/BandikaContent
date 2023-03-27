@@ -18,7 +18,7 @@
     ContentData rootContent = ContentCache.getContentRoot();
 %>
             <section class="treeSection">
-                <% if (rdata.hasAnyContentRight()) { %>
+                <% if (rdata.hasContentEditRight()) { %>
                 <div class = "">
                     <a class = "btn btn-sm btn-outline-light" href="/ctrl/content/clearClipboard"><%=$SH("_clearClipboard")%></a>
                 </div>
