@@ -438,7 +438,7 @@ public class ContentData extends BaseData implements IMasterInclude, Comparable<
     }
 
     public String getContentDataJsp() {
-        return "/WEB-INF/_jsp/content/editContentData.ajax.jsp";
+        return "/WEB-INF/_jsp/content/editData.ajax.jsp";
     }
 
     public String getContentTreeJsp() {

@@ -84,7 +84,7 @@ public class ContentController extends Controller {
     }
 
     //backend
-    public IResponse openCreateContentData(RequestData rdata) {
+    public IResponse openCreateData(RequestData rdata) {
         assertSessionCall(rdata);
         int parentId = rdata.getAttributes().getInt("parentId");
         ContentData parentData = ContentCache.getContent(parentId);
@@ -94,22 +94,22 @@ public class ContentController extends Controller {
         data.setCreateValues(parentData, rdata);
         data.setRanking(parentData.getChildren().size());
         rdata.setSessionObject(ContentRequestKeys.KEY_CONTENT, data);
-        return showEditContentData(data);
+        return showEditData(data);
     }
 
     //backend
-    public IResponse openEditContentData(RequestData rdata) {
+    public IResponse openEditData(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
         ContentData data = ContentBean.getInstance().getContent(contentId);
         checkRights(data.hasUserEditRight(rdata));
         data.setEditValues(ContentCache.getContent(data.getId()), rdata);
         rdata.setSessionObject(ContentRequestKeys.KEY_CONTENT, data);
-        return showEditContentData(data);
+        return showEditData(data);
     }
 
     //backend
-    public IResponse saveContentData(RequestData rdata) {
+    public IResponse saveData(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
         ContentData data = rdata.getSessionObject(ContentRequestKeys.KEY_CONTENT, ContentData.class);
@@ -119,12 +119,12 @@ public class ContentController extends Controller {
         else
             data.readUpdateRequestData(rdata);
         if (!rdata.checkFormErrors()) {
-            return showEditContentData(data);
+            return showEditData(data);
         }
         data.setChangerId(rdata.getUserId());
         if (!ContentBean.getInstance().saveContent(data)) {
             setSaveError(rdata);
-            return showEditContentData(data);
+            return showEditData(data);
         }
         data.setNew(false);
         rdata.removeSessionObject(ContentRequestKeys.KEY_CONTENT);
@@ -248,7 +248,7 @@ public class ContentController extends Controller {
     }
 
     //backend
-    public IResponse openSortChildPages(RequestData rdata) {
+    public IResponse openSortChildContents(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
         ContentData data = ContentCache.getContent(contentId);
@@ -258,7 +258,7 @@ public class ContentController extends Controller {
     }
 
     //backend
-    public IResponse saveChildPageRanking(RequestData rdata) {
+    public IResponse saveChildRankings(RequestData rdata) {
         assertSessionCall(rdata);
         int contentId = rdata.getId();
         ContentData data = rdata.getSessionObject(ContentRequestKeys.KEY_CONTENT, ContentData.class);
@@ -278,26 +278,26 @@ public class ContentController extends Controller {
         return new CloseDialogResponse("/ctrl/admin/openContentAdministration?contentId=" + contentId);
     }
 
-    public IResponse openCreateContentFrontend(RequestData rdata) {
+    public IResponse openCreateContent(RequestData rdata) {
         throw new ResponseException(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     //frontend
-    public IResponse openEditContentFrontend(RequestData rdata) {
+    public IResponse openEditContent(RequestData rdata) {
         throw new ResponseException(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     //frontend
-    public IResponse showEditContentFrontend(RequestData rdata) {
+    public IResponse showEditContent(RequestData rdata) {
         throw new ResponseException(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     //frontend
-    public IResponse saveContentFrontend(RequestData rdata) {
+    public IResponse saveContent(RequestData rdata) {
         throw new ResponseException(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
-    public IResponse cancelEditContentFrontend(RequestData rdata) {
+    public IResponse cancelEditContent(RequestData rdata) {
         assertSessionCall(rdata);
         ContentData data = rdata.getSessionObject(ContentRequestKeys.KEY_CONTENT, ContentData.class);
         checkRights(data.hasUserEditRight(rdata));
@@ -305,7 +305,7 @@ public class ContentController extends Controller {
         return show(rdata);
     }
 
-    protected IResponse showEditContentData(ContentData contentData) {
+    protected IResponse showEditData(ContentData contentData) {
         return new ForwardResponse(contentData.getContentDataJsp());
     }
 

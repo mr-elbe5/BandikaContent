@@ -15,11 +15,13 @@ ALTER TABLE t_content ALTER COLUMN type TYPE varchar(255);
 ALTER TABLE t_file ALTER COLUMN type TYPE varchar(255);
 
 UPDATE t_content set type = 'de.elbe5.content.ContentData' where type = 'ContentData';
-UPDATE t_content set type = 'de.elbe5.content.LinkData' where type = 'LinkData';
+UPDATE t_content set type = 'de.elbe5.link.LinkData' where type = 'LinkData';
 
 UPDATE t_file set type = 'de.elbe5.file.FileData' where type = 'FileData';
 UPDATE t_file set type = 'de.elbe5.file.DocumentData' where type = 'DocumentData';
 UPDATE t_file set type = 'de.elbe5.file.ImageData' where type = 'ImageData';
 UPDATE t_file set type = 'de.elbe5.file.MediaData' where type = 'MediaData';
+
+UPDATE t_content set type = 'de.elbe5.link.LinkData' where type = 'de.elbe5.content.LinkData';
 
 

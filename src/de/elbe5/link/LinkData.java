@@ -6,9 +6,11 @@
  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-package de.elbe5.content;
+package de.elbe5.link;
 
 import de.elbe5.base.StringHelper;
+import de.elbe5.content.ContentBean;
+import de.elbe5.content.ContentData;
 import de.elbe5.file.FileData;
 import de.elbe5.request.RequestData;
 import de.elbe5.response.IResponse;
@@ -76,7 +78,7 @@ public class LinkData extends ContentData {
 
     @Override
     public String getContentDataJsp() {
-        return "/WEB-INF/_jsp/content/editLinkData.ajax.jsp";
+        return "/WEB-INF/_jsp/link/editData.ajax.jsp";
     }
 
     @Override

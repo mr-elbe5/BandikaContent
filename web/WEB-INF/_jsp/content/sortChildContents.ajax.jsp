@@ -21,17 +21,17 @@
     RequestData rdata = RequestData.getRequestData(request);
     ContentData contentData = rdata.getSessionObject(ContentRequestKeys.KEY_CONTENT, ContentData.class);
     //todo js
-    String url = "/ctrl/content/saveChildPageRanking/" + contentData.getId();%>
+    String url = "/ctrl/content/saveChildRankings/" + contentData.getId();%>
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title"><%=$SH("_sortChildPages")%>
+            <h5 class="modal-title"><%=$SH("_sortChildContents")%>
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <form:form url="<%=url%>" name="subpages" ajax="true" multi="true">
+        <form:form url="<%=url%>" name="subcontents" ajax="true" multi="true">
             <div class="modal-body">
                 <form:formerror/>
                 <h3><%=$SH("_settings")%>
@@ -77,7 +77,7 @@
     <script type="text/javascript">
 
         function initRankingData() {
-            $('select', '#subpages').each(function (i) {
+            $('select', '#subcontents').each(function (i) {
                 setRankVal($(this), i);
             });
         }

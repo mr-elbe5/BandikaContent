@@ -25,32 +25,32 @@
     <%if ((contentData.hasUserEditRight(rdata))) {%>
     <div class="icons">
         <a class="icon fa fa-eye" href="" onclick="return linkTo('/ctrl/content/show/<%=contentData.getId()%>');" title="<%=$SH("_view")%>"> </a>
-        <a class="icon fa fa-pencil" href="" onclick="return openModalDialog('/ctrl/content/openEditContentData/<%=contentData.getId()%>');" title="<%=$SH("_edit")%>"> </a>
+        <a class="icon fa fa-pencil" href="" onclick="return openModalDialog('/ctrl/content/openEditData/<%=contentData.getId()%>');" title="<%=$SH("_edit")%>"> </a>
         <a class="icon fa fa-key" href="" onclick="return openModalDialog('/ctrl/content/openEditRights/<%=contentData.getId()%>');" title="<%=$SH("_rights")%>"> </a>
         <% if (contentData.getId() != ContentData.ID_ROOT){%>
         <a class="icon fa fa-scissors" href="" onclick="return linkTo('/ctrl/content/cutContent/<%=contentData.getId()%>');" title="<%=$SH("_cut")%>"> </a>
         <%}%>
         <a class="icon fa fa-copy" href="" onclick="return linkTo('/ctrl/content/copyContent/<%=contentData.getId()%>');" title="<%=$SH("_copy")%>"> </a>
         <%if (contentData.hasChildren()){%>
-        <a class="icon fa fa-sort" href="" onclick="return openModalDialog('/ctrl/content/openSortChildPages/<%=contentData.getId()%>');" title="<%=$SH("_sortChildPages")%>"> </a>
+        <a class="icon fa fa-sort" href="" onclick="return openModalDialog('/ctrl/content/openSortChildContents/<%=contentData.getId()%>');" title="<%=$SH("_sortChildPages")%>"> </a>
         <%}%>
         <% if (contentData.getId() != ContentData.ID_ROOT){%>
         <a class="icon fa fa-trash-o" href="" onclick="if (confirmDelete()) return linkTo('/ctrl/content/deleteContent/<%=contentData.getId()%>');" title="<%=$SH("_delete")%>"> </a>
         <%}%>
         <% if (rdata.hasClipboardData(ContentRequestKeys.KEY_CONTENT)) {%>
-        <a class="icon fa fa-paste" href="/ctrl/content/pasteContent?parentId=<%=contentData.getId()%>" title="<%=$SH("_pasteContent")%>"> </a>
+        <a class="icon fa fa-paste" href="" onclick="return linkTo('/ctrl/content/pasteContent?parentId=<%=contentData.getId()%>');" title="<%=$SH("_pasteContent")%>"> </a>
         <%
         }
         if (!childClasses.isEmpty()) {
             if (childClasses.size() == 1){%>
-        <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/content/openCreateContentData?parentId=<%=contentData.getId()%>&type=<%=childClasses.get(0).getName()%>');" title="<%=$SH("_newContent")%>"></a>
+        <a class="icon fa fa-plus" onclick="return openModalDialog('/ctrl/content/openCreateData?parentId=<%=contentData.getId()%>&type=<%=childClasses.get(0).getName()%>');" title="<%=$SH("_newContent")%>"></a>
         <%} else {%>
         <a class="icon fa fa-plus dropdown-toggle" data-toggle="dropdown" title="<%=$SH("_newContent")%>"></a>
         <div class="dropdown-menu">
             <%for (Class<? extends ContentData> pageType : childClasses) {
-                String name = $SH("class."+pageType.getName());
+                String name = $SH(pageType.getName());
             %>
-            <a class="dropdown-item" onclick="return openModalDialog('/ctrl/content/openCreateContentData?parentId=<%=contentData.getId()%>&type=<%=pageType.getName()%>');"><%=name%>
+            <a class="dropdown-item" onclick="return openModalDialog('/ctrl/content/openCreateData?parentId=<%=contentData.getId()%>&type=<%=pageType.getName()%>');"><%=name%>
             </a>
             <%
                 }%>

@@ -14,21 +14,22 @@
 <%@ page import="de.elbe5.user.UserCache" %>
 <%@ page import="de.elbe5.request.ContentRequestKeys" %>
 <%@ page import="de.elbe5.user.UserData" %>
-<%@ page import="de.elbe5.content.LinkData" %>
+<%@ page import="de.elbe5.link.LinkData" %>
 <%@ taglib uri="/WEB-INF/formtags.tld" prefix="form" %>
 <%
     RequestData rdata = RequestData.getRequestData(request);
     LinkData contentData = rdata.getSessionObject(ContentRequestKeys.KEY_CONTENT, LinkData.class);
-    String url = "/ctrl/content/saveContentData/" + contentData.getId();
+    String url = "/ctrl/content/saveData/" + contentData.getId();
     UserData creator = UserCache.getUser(contentData.getCreatorId());
     String creatorName = creator == null ? "" : creator.getName();
     UserData changer = UserCache.getUser(contentData.getChangerId());
     String changerName = changer == null ? "" : changer.getName();
+    String header = contentData.isNew() ? $SH("_newContent") : $SH("_editContentData");
 %>
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title"><%=$SH("_editContentData")%>
+            <h5 class="modal-title"><%=header%>:&nbsp;<%=$SH(contentData.getType())%>
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>

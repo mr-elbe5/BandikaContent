@@ -25,7 +25,7 @@
             <%if (contentData.hasUserEditRight(rdata)) {%>
             <div class="icons">
                 <% if (rdata.hasClipboardData(ContentRequestKeys.KEY_FILE)) {%>
-                <a class="icon fa fa-paste" href="/ctrl/file/pasteFile?parentId=<%=contentData.getId()%>" title="<%=$SH("_pasteFile")%>"> </a>
+                <a class="icon fa fa-paste" href="" onclick="return linkTo('/ctrl/file/pasteFile?parentId=<%=contentData.getId()%>');" title="<%=$SH("_pasteFile")%>"> </a>
                 <%}
                     if (!fileClasses.isEmpty()) {
                         if (fileClasses.size() == 1){%>
@@ -34,7 +34,7 @@
                 <a class="icon fa fa-plus dropdown-toggle" data-toggle="dropdown" title="<%=$SH("_newFile")%>"></a>
                 <div class="dropdown-menu">
                     <%for (Class<? extends FileData> fileType : fileClasses) {
-                        String name = $SH("class."+fileType.getName());
+                        String name = $SH(fileType.getName());
                     %>
                     <a class="dropdown-item" onclick="return openModalDialog('/ctrl/file/openCreateFile?parentId=<%=contentData.getId()%>&type=<%=fileType.getName()%>');"><%=name%>
                     </a>
